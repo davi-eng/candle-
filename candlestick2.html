@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Trading Candlestick Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        .chart-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                padding: 10px;
+            }
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <canvas id="candlestickChart"></canvas>
+    </div>
+
+    <script>
+        function generateCandlestickData(numPoints) {
+            const data = [];
+            let basePrice = 100;
+            
+            for (let i = 0; i < numPoints; i++) {
+                const open = basePrice + (Math.random() - 0.5) * 10;
+                const close = basePrice + (Math.random() - 0.5) * 10;
+                const high = Math.max(open, close) + Math.random() * 5;
+                const low = Math.min(open, close) - Math.random() * 5;
+
+                data.push({
+                    x: new Date(2024, 0, i + 1),
+                    o: open,
+                    h: high,
+                    l: low,
+                    c: close
+                });
+
+                basePrice = close;
+            }
+            return data;
+        }
+
+        const candlestickData = generateCandlestickData(30);
+
+        const ctx = document.getElementById('candlestickChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'candlestick',
+            data: {
+                datasets: [{
+                    label: 'Binary Trading',
+                    data: candlestickData,
+                    borderColor: '#000', // Border color for the candlesticks
+                    color: {
+                        up: '#26a69a',   // Color for upward candles
+                        down: '#ef5350', // Color for downward candles
+                    },
+                    barThickness: 5 // Adjust the width of the candlesticks here
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            tooltipFormat: 'MMM D, YYYY',
+                            displayFormats: {
+                                day: 'MMM D'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Price'
+                        },
+                        beginAtZero: false
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Binary Trading Candlestick Chart'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
